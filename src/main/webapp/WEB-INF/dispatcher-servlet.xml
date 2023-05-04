@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        ">
+    <tx:annotation-driven/>
+    <context:component-scan base-package="com.bipin.springmvc"/>
+    <mvc:annotation-driven/>
+    <mvc:annotation-driven enable-matrix-variables="true"/>
+    <bean name="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- Data Source Bean -->
+    <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" name="ds">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/springjdbc?autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true"/>
+        <property name="username" value="bipinshan"/>
+        <property name="password" value="Admin@2023"/>
+    </bean>
+
+    <!-- LocalSessionFactoryBean -->
+    <bean class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" name="localSessionFactory">
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.bipin.springmvc.model.Product</value>
+            </list>
+        </property>
+        <property name="dataSource" ref="ds"/>
+    </bean>
+
+    <!-- Hibernate Template -->
+    <bean name="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+        <property name="sessionFactory" ref="localSessionFactory"/>
+    </bean>
+
+    <!-- Hibernate Transaction Manager -->
+    <bean class="org.springframework.orm.hibernate5.HibernateTransactionManager" name="transactionManager">
+        <property name="sessionFactory" ref="localSessionFactory"/>
+    </bean>
+</beans>
